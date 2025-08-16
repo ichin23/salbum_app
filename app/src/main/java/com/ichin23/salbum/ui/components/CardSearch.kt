@@ -1,0 +1,65 @@
+package com.ichin23.salbum.ui.components
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.Dimension
+import coil3.compose.AsyncImage
+import com.ichin23.salbum.domain.models.Album
+import com.ichin23.salbum.domain.models.Image
+import com.ichin23.salbum.ui.theme.Inter
+import com.ichin23.salbum.ui.theme.LightGreyText
+
+@Composable
+fun CardSearch(album: Album,modifier: Modifier = Modifier) {
+    Row(
+        modifier=modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp)
+    ) {
+        AsyncImage(
+            model=album.images.first().url,
+            contentDescription = "Cada de ${album.name}",
+            modifier=Modifier
+                .clip(RoundedCornerShape(12.dp))
+                .size(70.dp)
+        )
+        Spacer(Modifier.width(10.dp))
+        Column(
+            modifier = Modifier.height(70.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                album.name,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = TextStyle(
+                    fontFamily = Inter,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 18.sp,
+                    lineHeight = 16.sp,
+                    letterSpacing = 0.3.sp
+                ),
+            )
+            Text(album.artists.joinToString(separator = ", ") { it -> it.name },
+                    style = MaterialTheme.typography.bodySmall,
+                color = LightGreyText)
+        }
+    }
+}
