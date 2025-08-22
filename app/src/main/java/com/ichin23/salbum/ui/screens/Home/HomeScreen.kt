@@ -49,11 +49,11 @@ fun SharedTransitionScope.HomeScreen(
     val ratings by viewModel.ratings.collectAsStateWithLifecycle()
 
     val refreshing by viewModel.refreshing.collectAsStateWithLifecycle()
-        Column(
+    Column(
         Modifier
-            .fillMaxSize()
-            //.verticalScroll(rememberScrollState())
-            .padding(vertical = 20.dp)
+        .fillMaxSize()
+        //.verticalScroll(rememberScrollState())
+        .padding(vertical = 20.dp)
     ) {
         LogoApp()
         Spacer(Modifier.height(10.dp))

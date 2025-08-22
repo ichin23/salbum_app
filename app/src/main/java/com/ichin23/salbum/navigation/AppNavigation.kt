@@ -40,7 +40,9 @@ fun AppNavigation() {
                     }
                 }
                 composable(route = ScreenName.SEARCH_SCREEN) {
-                    SearchScreen(searchFocusRequest.value, {searchFocusRequest.value=false})
+                    SearchScreen(searchFocusRequest.value, {searchFocusRequest.value=false}, {id->
+                        navController.navigate(ScreenName.DETAIL_ALBUM + "/${id}")
+                    },)
                 }
                 composable(route = ScreenName.PROFILE_SCREEN) {
                     ProfileScreen()

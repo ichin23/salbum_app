@@ -9,6 +9,7 @@ import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
 import com.google.gson.JsonParseException
+import java.time.LocalDate
 
 class LocalDateTimeDeserializer : JsonDeserializer<LocalDateTime> {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -20,6 +21,11 @@ class LocalDateTimeDeserializer : JsonDeserializer<LocalDateTime> {
         try {
             // Pega a string do JSON e a sanitiza (remove aspas, se houver)
             val jsonString = json.asString
+
+            if(jsonString.length==10){
+                val localDate = LocalDate.parse(jsonString)
+                return localDate.atStartOfDay()
+            }
 
             // Primeiro, parse para OffsetDateTime para lidar com o fuso horário
             val offsetDateTime = OffsetDateTime.parse(jsonString)

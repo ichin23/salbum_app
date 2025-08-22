@@ -2,6 +2,7 @@ package com.ichin23.salbum.ui.screens.Search
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,9 +47,10 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 @Composable
-fun SearchScreen(focus:Boolean, onFocusHandled:() ->Unit, modifier: Modifier = Modifier, viewModel: SearchScreenVM = hiltViewModel()) {
+fun SearchScreen(focus:Boolean, onFocusHandled:() ->Unit, onNavigate: (idAlbum:String)->Unit, modifier: Modifier = Modifier, viewModel: SearchScreenVM = hiltViewModel()) {
     var searchState by rememberSaveable { mutableStateOf("") }
     var searchResult = viewModel.searchResult.collectAsStateWithLifecycle()
+    var searchTest = viewModel.searchTest.collectAsStateWithLifecycle()
     var loading = viewModel.loading.collectAsStateWithLifecycle()
     val focusRequester = remember { FocusRequester() }
 
@@ -113,12 +115,16 @@ fun SearchScreen(focus:Boolean, onFocusHandled:() ->Unit, modifier: Modifier = M
                         CircularProgressIndicator()
                     }
                 }else{
-                    if (searchResult.value.isNotEmpty()) {
+                    if (searchTest.value.isNotEmpty()) {
                         LazyColumn(
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            items(searchResult.value) {
-                                CardSearch(it)
+
+                            items(searchTest.value) {
+                                //Text(it.title)
+                                CardSearch(it, modifier = Modifier.clickable{
+                                    onNavigate(it.releases.first().id)
+                                })
                             }
                         }
                     }else{

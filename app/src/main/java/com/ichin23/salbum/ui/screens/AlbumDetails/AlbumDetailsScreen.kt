@@ -73,6 +73,7 @@ import com.ichin23.salbum.ui.theme.BluePrimary
 import com.ichin23.salbum.ui.theme.LightGreyText
 import com.ichin23.salbum.ui.theme.WhiteText
 import com.ichin23.salbum.R
+import com.ichin23.salbum.domain.models.ExternalUrls
 import com.ichin23.salbum.ui.components.FiveStarRating
 import kotlinx.coroutines.launch
 
@@ -85,7 +86,8 @@ fun SharedTransitionScope.AlbumDetailsScreen(
     modifier: Modifier = Modifier,
     viewModel: AlbumDetailsVM = hiltViewModel()
 ) {
-    val albumDetail by viewModel.albumDetails.collectAsStateWithLifecycle()
+    //val albumDetail by viewModel.albumDetails.collectAsStateWithLifecycle()
+    val albumTest by viewModel.albumTest.collectAsStateWithLifecycle()
     val ratings by viewModel.reviews.collectAsStateWithLifecycle()
 
     val sheetState = rememberModalBottomSheetState()
@@ -93,7 +95,7 @@ fun SharedTransitionScope.AlbumDetailsScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     var ratingValue by remember { mutableDoubleStateOf(0.toDouble()) }
 
-    albumDetail?.let { it1 ->
+    albumTest?.let { it ->
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
@@ -117,16 +119,16 @@ fun SharedTransitionScope.AlbumDetailsScreen(
             ) {
                 item {
                     AlbumFolderDetails(
-                        albumDetail!!, modifier = Modifier
+                        albumTest!!, modifier = Modifier
                             .fillMaxWidth()
                             .sharedElement(
-                                rememberSharedContentState(key = "album-${albumDetail!!.id}"),
+                                rememberSharedContentState(key = "album-${albumTest!!.id}"),
                                 animatedVisibilityScope = animatedVisibilityScope
                             )
                     )
                 }
 
-                items(albumDetail!!.artists) { artist ->
+                items(albumTest!!.artistCredit) { artist ->
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
@@ -195,14 +197,24 @@ fun SharedTransitionScope.AlbumDetailsScreen(
                             Column(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                AlbumInfoTag("Lançamento", albumDetail!!.releaseDate)
+                                AlbumInfoTag("Lançamento", albumTest!!.date)
+                                AlbumInfoTag("Status", albumTest!!.status)
+                                AlbumInfoTag("País", albumTest!!.country)
+                                AlbumInfoTag("MBID", albumTest!!.id)
                             }
                         }
                     }
                 }
+                item{
+                    Text("Músicas", modifier = Modifier.clickable{
+
+                    })
+                }
                 item {
                     Column {
-                        ListenExternal(albumDetail!!.externalUrls)
+                        if(albumTest!!.relations.isNotEmpty()){
+                            ListenExternal(ExternalUrls(albumTest!!.relations.first().url.toString()) )
+                        }
                         Text(
                             "Reviews",
                             modifier = Modifier.padding(horizontal = 20.dp, vertical = 15.dp),
@@ -271,7 +283,7 @@ fun SharedTransitionScope.AlbumDetailsScreen(
                 modifier = Modifier.fillMaxWidth().padding(12.dp),
 
             ) {
-                Text("Sua avaliação para ${albumDetail!!.name}", style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp))
+                Text("Sua avaliação para ${albumTest!!.title}", style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp))
                 Spacer(Modifier.height(8.dp))
                 FiveStarRating(ratingValue, {ratingValue=it}, modifier = Modifier.align(Alignment.CenterHorizontally), starSize = 40.dp)
                 Spacer(Modifier.height(8.dp))

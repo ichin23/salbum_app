@@ -29,13 +29,14 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil3.compose.AsyncImage
 import com.ichin23.salbum.R
+import com.ichin23.salbum.data.api.dto.musicbrainz.release.ReleaseDTO
 import com.ichin23.salbum.domain.models.Album
 import com.ichin23.salbum.ui.theme.WhiteText
 import com.ichin23.salbum.ui.theme.YellowTertiary
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun AlbumFolderDetails(albumDetail: Album, modifier: Modifier = Modifier) {
+fun AlbumFolderDetails(albumDetail: ReleaseDTO, modifier: Modifier = Modifier) {
     ConstraintLayout(
         modifier = modifier
 
@@ -48,7 +49,7 @@ fun AlbumFolderDetails(albumDetail: Album, modifier: Modifier = Modifier) {
     ) {
         val (image, gradient, title, nota) = createRefs()
         AsyncImage(
-            model = albumDetail.images.first().url,
+            model = albumDetail.image,
             contentDescription = "Capa",
             modifier = Modifier
                 .clip(RoundedCornerShape(bottomEnd = 45.dp, bottomStart = 45.dp))
@@ -93,7 +94,7 @@ fun AlbumFolderDetails(albumDetail: Album, modifier: Modifier = Modifier) {
         )
 
         Text(
-            text = albumDetail.name,
+            text = albumDetail.title,
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
                 .fillMaxWidth(0.6f)
