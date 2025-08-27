@@ -1,13 +1,12 @@
 package com.ichin23.salbum.data.api
 
 import com.google.gson.GsonBuilder
-import com.ichin23.salbum.utils.LocalDateTimeDeserializer
+import com.ichin23.salbum.core.utils.LocalDateTimeDeserializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDateTime
@@ -19,6 +18,7 @@ object NetworkModule {
 
     private const val MUSICBRAINZ_API_URL = "https://musicbrainz.org/ws/2/";
     private const val IMAGES_API_URL = "https://coverartarchive.org/";
+    private const val SALBUM_API_URL = "http://192.168.1.23:8080/";
 
     @Provides
     @Singleton
@@ -58,6 +58,22 @@ object NetworkModule {
 
         return Retrofit.Builder()
             .baseUrl(IMAGES_API_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(customGson))
+            .build()
+    }
+
+    @SalbumAPI
+    @Provides
+    @Singleton
+    fun provideSalbumRetrofit(okHttpClient: OkHttpClient): Retrofit{
+        val gsonBuilder = GsonBuilder()
+        gsonBuilder.registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
+
+        val customGson = gsonBuilder.create()
+
+        return Retrofit.Builder()
+            .baseUrl(SALBUM_API_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(customGson))
             .build()

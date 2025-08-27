@@ -1,4 +1,4 @@
-package com.ichin23.salbum.utils
+package com.ichin23.salbum.core.utils
 
 sealed class UiEvent {
     object PopBackStack: UiEvent()

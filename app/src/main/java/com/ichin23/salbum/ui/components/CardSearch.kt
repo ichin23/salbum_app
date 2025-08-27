@@ -29,7 +29,7 @@ fun CardSearch(album: ReleaseGroup ,modifier: Modifier = Modifier) {
         modifier=modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
         AsyncImage(
-            model=album.image,
+            model=album.links.find { link ->link.rel=="image" }?.href,
             contentDescription = "Cada de ${album.title}",
             modifier=Modifier
                 .clip(RoundedCornerShape(12.dp))

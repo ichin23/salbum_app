@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -27,15 +28,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ichin23.salbum.core.auth.AuthViewModel
 import com.ichin23.salbum.ui.components.RatingCardHome
 import com.ichin23.salbum.ui.theme.LightGreyText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(modifier: Modifier = Modifier, viewModel: ProfileScreenVM = hiltViewModel()) {
+fun ProfileScreen(modifier: Modifier = Modifier, authVM: AuthViewModel = hiltViewModel(), viewModel: ProfileScreenVM = hiltViewModel()) {
     val currentUser by viewModel.currentUser.collectAsStateWithLifecycle()
     val ratings by viewModel.ratings.collectAsStateWithLifecycle()
     val refreshin by viewModel.refreshing.collectAsStateWithLifecycle()
+    val user by authVM.userState.collectAsStateWithLifecycle()
 
     Box {
         if(currentUser==null){
@@ -64,11 +67,11 @@ fun ProfileScreen(modifier: Modifier = Modifier, viewModel: ProfileScreenVM = hi
                             Spacer(Modifier.width(12.dp))
                             Column {
                                 Text(
-                                    currentUser!!.name,
+                                    user.user.name,
                                     style = MaterialTheme.typography.displayMedium.copy(fontSize = 25.sp)
                                 )
                                 Text(
-                                    currentUser!!.username,
+                                    user.user.username,
                                     style = MaterialTheme.typography.bodyLarge.copy(fontSize = 14.sp),
                                     color = LightGreyText
                                 )

@@ -1,6 +1,17 @@
 package com.ichin23.salbum.navigation
 
 object ScreenName {
+
+    const val SPLASH_SCREEN = "splash"
+
+    // AUTH ROUTE GRAPH
+    const val AUTH_ROUTE = "auth"
+    const val LOGIN_SCREEN = "login"
+    const val SIGNUP_SCREEN = "signup"
+
+
+    // MAIN ROUTE GRAPH
+    const val MAIN_ROUTE = "main"
     const val HOME_SCREEN = "home"
     const val DETAIL_ALBUM = "album"
     const val SEARCH_SCREEN = "search"

@@ -1,0 +1,27 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
+// Esta opção define o nome do pacote Java onde a classe será gerada.
+option java_package = "com.ichin23.salbum.core.datastore";
+
+// Esta opção define o nome do arquivo .java que será gerado (UserStateOuterClass.java).
+option java_outer_classname = "UserStateOuterClass";
+
+message UserState {
+  message Token {
+    string value = 1;
+    google.protobuf.Timestamp expire_at = 2;
+  }
+
+  message User {
+    string id = 1;
+    string name = 2;
+    string username = 3;
+    string email = 4;
+    string image_url = 5;
+  }
+
+  Token access_token = 1;
+  Token refresh_token = 2;
+  User user = 3;
+}

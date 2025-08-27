@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ichin23.salbum.data.api.APIMusicBrainzService
 import com.ichin23.salbum.data.api.APIReleasesImagesService
+import com.ichin23.salbum.data.api.ApiSalbumService
 import com.ichin23.salbum.data.api.dto.musicbrainz.releaseGroup.ReleaseGroup
 import com.ichin23.salbum.domain.models.Album
 import com.ichin23.salbum.domain.repository.AlbumRepository
@@ -19,6 +20,7 @@ import retrofit2.HttpException
 @HiltViewModel
 class SearchScreenVM @Inject constructor(
     private val albumRepository: AlbumRepository,
+    private val salbumService: ApiSalbumService,
     private val musicBrainzService: APIMusicBrainzService,
     private val images: APIReleasesImagesService,
     private val savedStateHandle: SavedStateHandle
@@ -37,15 +39,15 @@ class SearchScreenVM @Inject constructor(
         viewModelScope.launch {
             _loading.value = true
             try {
-                val response = musicBrainzService.searchAlbum(query)
+                val response = salbumService.searchAlbum(query)
 
-                response.releaseGroups.forEach {
-                    try{
-                        it.image=images.getImages(it.releases.first().id).images.first().image
-                    }catch (e: HttpException){
-                        it.image=null
-                    }
-                }
+//                response.releaseGroups.forEach {
+//                    try{
+//                        it.image=images.getImages(it.releases.first().id).images.first().image
+//                    }catch (e: HttpException){
+//                        it.image=null
+//                    }
+//                }
 
                 _searchTest.value = response.releaseGroups;
                 Log.i("Response:", _searchTest.value.toString())

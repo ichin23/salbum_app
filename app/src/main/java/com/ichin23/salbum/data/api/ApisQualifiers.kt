@@ -9,3 +9,7 @@ annotation class MusicBrainzApi
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class ImagesBrainzAPI
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class SalbumAPI

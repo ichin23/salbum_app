@@ -2,8 +2,24 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.protobuf") version "0.9.4"
     id("com.google.dagger.hilt.android") // Plugin do Hilt
     kotlin("kapt") // Para o processador de anotações do Hilt
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.23.4"
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                create("java"){
+                    option("lite")
+                } // ou "kotlin" se usar protobuf-kotlin
+            }
+        }
+    }
 }
 
 android {
@@ -39,6 +55,25 @@ android {
     buildFeatures {
         compose = true
     }
+
+    sourceSets["main"].java.srcDirs(
+        "build/generated/source/proto/main/java",
+        "build/generated/source/proto/main/javalite" // Adicione ambos para garantir
+    )
+}
+
+// Esta é a maneira moderna e segura de configurar tarefas
+tasks.matching {
+    // Encontra tarefas como 'kaptDebugKotlin' e 'kaptReleaseKotlin',
+    // mas ignora tarefas internas como 'kaptGenerateStubs...'
+    it.name.startsWith("kapt") && it.name.endsWith("Kotlin") && !it.name.contains("Stubs")
+}.configureEach {
+    // Para cada tarefa Kapt encontrada, deriva o nome da variante
+    val variantName = name.removePrefix("kapt").removeSuffix("Kotlin")
+    // Constrói o nome da tarefa Protobuf correspondente
+    val protoTaskName = "generate${variantName}Proto"
+    // Adiciona a dependência
+    dependsOn(protoTaskName)
 }
 
 kapt {
@@ -71,11 +106,15 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1") //constraint layout
 
 
+    //Splash Screen
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
     // Hilt
     implementation("com.google.dagger:hilt-android:2.56.2") // Ou a versão do Hilt que você definiu no project-level
     kapt("com.google.dagger:hilt-android-compiler:2.56.2")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0") // Integração Hilt com Navigation Compose
     kapt("androidx.hilt:hilt-compiler:1.1.0")
+    implementation("javax.inject:javax.inject:1")
 
     // Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.8.0-beta02") // Ou a versão mais recente
@@ -91,7 +130,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2") // Ou a versão mais recente
 
     // DataStore (Preferences DataStore)
-    implementation("androidx.datastore:datastore-preferences:1.1.7") // Ou a versão mais recente
+    implementation("androidx.datastore:datastore:1.1.7") // Ou a versão mais recente
+
+    // Protobuf
+    implementation("com.google.protobuf:protobuf-javalite:4.31.1")
 
     // Lifecycle (ViewModel)
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.2") // Ou a versão mais recente

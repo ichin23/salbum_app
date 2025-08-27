@@ -1,6 +1,7 @@
 package com.ichin23.salbum.data.api.dto.musicbrainz.releaseGroup
 
 import com.google.gson.annotations.SerializedName
+import com.ichin23.salbum.data.api.dto.musicbrainz.LinksHateoas
 import java.time.LocalDateTime
 
 data class ReleaseGroup(
@@ -13,5 +14,6 @@ data class ReleaseGroup(
     val firstReleaseDate: String,
     @SerializedName("primary-type")
     val primaryType: String,
-    val releases: List<Release>
+    val releases: List<Release>,
+    val links: List<LinksHateoas>
 )

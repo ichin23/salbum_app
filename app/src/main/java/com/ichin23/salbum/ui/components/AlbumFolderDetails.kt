@@ -49,7 +49,7 @@ fun AlbumFolderDetails(albumDetail: ReleaseDTO, modifier: Modifier = Modifier) {
     ) {
         val (image, gradient, title, nota) = createRefs()
         AsyncImage(
-            model = albumDetail.image,
+            model = albumDetail.links.image.href,
             contentDescription = "Capa",
             modifier = Modifier
                 .clip(RoundedCornerShape(bottomEnd = 45.dp, bottomStart = 45.dp))

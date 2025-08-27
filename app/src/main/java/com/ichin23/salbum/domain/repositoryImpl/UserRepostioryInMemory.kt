@@ -6,12 +6,10 @@ import androidx.compose.runtime.setValue
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.ichin23.salbum.data.ratingsJSON
 import com.ichin23.salbum.data.userJSON
-import com.ichin23.salbum.domain.models.Ratings
 import com.ichin23.salbum.domain.models.User
 import com.ichin23.salbum.domain.repository.UserRepository
-import com.ichin23.salbum.utils.LocalDateTimeDeserializer
+import com.ichin23.salbum.core.utils.LocalDateTimeDeserializer
 import java.time.LocalDateTime
 
 class UserRepostioryInMemory: UserRepository {

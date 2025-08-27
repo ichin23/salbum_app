@@ -17,4 +17,8 @@ object ApiModules {
     @Provides
     fun provideApiImagesService(@ImagesBrainzAPI retrofit: Retrofit): APIReleasesImagesService =
         retrofit.create(APIReleasesImagesService::class.java)
+
+    @Provides
+    fun provideApiSalbumService(@SalbumAPI retrofit: Retrofit): ApiSalbumService =
+        retrofit.create(ApiSalbumService::class.java)
 }

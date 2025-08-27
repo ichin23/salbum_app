@@ -1,7 +1,5 @@
 package com.ichin23.salbum.domain.repositoryImpl
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,11 +7,9 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.ichin23.salbum.data.albumsJSON
-import com.ichin23.salbum.data.ratingsJSON
 import com.ichin23.salbum.domain.models.Album
-import com.ichin23.salbum.domain.models.Ratings
 import com.ichin23.salbum.domain.repository.AlbumRepository
-import com.ichin23.salbum.utils.LocalDateTimeDeserializer
+import com.ichin23.salbum.core.utils.LocalDateTimeDeserializer
 import java.time.LocalDateTime
 
 class AlbumRepositoryInMemory: AlbumRepository {

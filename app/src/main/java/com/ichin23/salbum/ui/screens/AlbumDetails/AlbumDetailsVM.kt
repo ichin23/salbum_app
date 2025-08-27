@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ichin23.salbum.data.api.APIMusicBrainzService
 import com.ichin23.salbum.data.api.APIReleasesImagesService
+import com.ichin23.salbum.data.api.ApiSalbumService
 import com.ichin23.salbum.data.api.MusicBrainzApi
 import com.ichin23.salbum.data.api.dto.musicbrainz.release.ReleaseDTO
 import com.ichin23.salbum.domain.models.Album
@@ -29,6 +30,7 @@ class AlbumDetailsVM @Inject constructor(
     private val albumRepository: AlbumRepository,
     private val ratingsRepository: RatingsRepository,
     private val userRepository: UserRepository,
+    private val salbumService: ApiSalbumService,
     private val musicBrainzApi: APIMusicBrainzService,
     private val imagesService: APIReleasesImagesService,
     savedStateHandle: SavedStateHandle
@@ -81,8 +83,8 @@ class AlbumDetailsVM @Inject constructor(
                 try {
 
 
-                    _albumTest.value = musicBrainzApi.lookupAlbum(albumId)
-                    _albumTest.value?.image = imagesService.getImages(albumId).images.first().image
+                    _albumTest.value = salbumService.getAlbum(albumId)
+                    //_albumTest.value?.image = imagesService.getImages(albumId).images.first().image
                 }catch (e: HttpException){
                     Log.e("Req error", e.response()?.raw()?.request?.headers.toString())
                     Log.e("Req error", e.response()?.raw()?.request?.url.toString())
