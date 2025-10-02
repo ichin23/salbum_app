@@ -31,6 +31,7 @@ import coil3.compose.AsyncImage
 import com.ichin23.salbum.R
 import com.ichin23.salbum.data.api.dto.musicbrainz.release.ReleaseDTO
 import com.ichin23.salbum.domain.models.Album
+import com.ichin23.salbum.ui.theme.LightGreyText
 import com.ichin23.salbum.ui.theme.WhiteText
 import com.ichin23.salbum.ui.theme.YellowTertiary
 
@@ -48,8 +49,9 @@ fun AlbumFolderDetails(albumDetail: ReleaseDTO, modifier: Modifier = Modifier) {
                 )).fillMaxWidth().aspectRatio(1f)
     ) {
         val (image, gradient, title, nota) = createRefs()
+        if(albumDetail.links.isNotEmpty())
         AsyncImage(
-            model = albumDetail.links.image.href,
+            model = albumDetail.links.first { it.rel == "image" }.href,
             contentDescription = "Capa",
             modifier = Modifier
                 .clip(RoundedCornerShape(bottomEnd = 45.dp, bottomStart = 45.dp))
@@ -68,7 +70,25 @@ fun AlbumFolderDetails(albumDetail: ReleaseDTO, modifier: Modifier = Modifier) {
                 },
 
 
-        )
+        )else
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(bottomEnd = 45.dp, bottomStart = 45.dp))
+                    .background(LightGreyText)
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+
+                    .constrainAs(image) {
+                        linkTo(
+                            start = parent.start,
+                            end = parent.end,
+                            top = parent.top,
+                            bottom = parent.bottom
+
+                        )
+                        height= Dimension.fillToConstraints
+                    },
+            )
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(bottomEnd = 45.dp, bottomStart = 45.dp)).fillMaxWidth()
@@ -117,7 +137,7 @@ fun AlbumFolderDetails(albumDetail: ReleaseDTO, modifier: Modifier = Modifier) {
                 colorFilter = ColorFilter.tint(YellowTertiary),
                 modifier = Modifier.size(30.dp)
             )
-            Text("4.3", style = MaterialTheme.typography.displayMedium, color = WhiteText)
+            Text(albumDetail.rate.toString(), style = MaterialTheme.typography.displayMedium, color = WhiteText)
         }
 
     }

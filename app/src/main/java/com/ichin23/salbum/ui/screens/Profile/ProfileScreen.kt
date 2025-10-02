@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -91,6 +92,9 @@ fun ProfileScreen(modifier: Modifier = Modifier, authVM: AuthViewModel = hiltVie
                                     )
                                     Text("Seguindo", color = LightGreyText)
                                 }
+                                TextButton({viewModel.onEvent(ProfileEvents.OnLogout)}) {
+                                    Text("Sair")
+                                }
                             }
                         }
                     }
@@ -102,7 +106,7 @@ fun ProfileScreen(modifier: Modifier = Modifier, authVM: AuthViewModel = hiltVie
                         )
                     }
                     itemsIndexed(ratings) { index, rating ->
-                        RatingCardHome(rating)
+                        //RatingCardHome(rating)
                         // Adicione um Spacer para criar um espaço entre os itens
                         if (index < ratings.lastIndex) {
                             Spacer(modifier = Modifier.width(16.dp))

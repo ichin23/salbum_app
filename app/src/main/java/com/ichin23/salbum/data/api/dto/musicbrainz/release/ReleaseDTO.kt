@@ -1,7 +1,7 @@
 package com.ichin23.salbum.data.api.dto.musicbrainz.release
 
 import com.google.gson.annotations.SerializedName
-import com.ichin23.salbum.data.api.dto.musicbrainz.LinksHateoas
+import com.ichin23.salbum.data.api.dto.salbum.utils.LinksHateoas
 
 data class ReleaseDTO(
     val date: String,
@@ -10,10 +10,11 @@ data class ReleaseDTO(
     val status:String,
     val title: String,
     val id: String,
-    var image:String,
+    var image: String,
+    var rate: Double,
     val relations: List<ReleaseRelation>,
     val media: List<ReleaseMedia>,
     @SerializedName("artist-credit")
     val artistCredit: List<ArtistCreditLookup>,
-    @SerializedName("_links") val links: LinksRelease
+    @SerializedName("links") val links: List<LinksHateoas>
 )

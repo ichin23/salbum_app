@@ -1,4 +1,4 @@
-package com.ichin23.salbum.data.api.dto.musicbrainz
+package com.ichin23.salbum.data.api.dto.salbum.utils
 
 data class LinksHateoas(
     val rel: String,

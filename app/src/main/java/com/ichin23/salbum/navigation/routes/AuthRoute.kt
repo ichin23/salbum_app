@@ -23,7 +23,7 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController, modifier: Mod
         route = ScreenName.AUTH_ROUTE
     ){
         composable(route = ScreenName.LOGIN_SCREEN) {
-            LoginScreen({navController.navigate(ScreenName.MAIN_ROUTE)})
+            LoginScreen({route -> navController.navigate(route)})
         }
         composable(route = ScreenName.SIGNUP_SCREEN) {
             SignupScreen()

@@ -30,6 +30,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
@@ -42,6 +43,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
@@ -63,6 +65,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.ichin23.salbum.ui.theme.GreyText
 import com.ichin23.salbum.ui.components.AlbumFolderDetails
 import com.ichin23.salbum.ui.components.AlbumInfoTag
@@ -73,7 +76,9 @@ import com.ichin23.salbum.ui.theme.BluePrimary
 import com.ichin23.salbum.ui.theme.LightGreyText
 import com.ichin23.salbum.ui.theme.WhiteText
 import com.ichin23.salbum.R
+import com.ichin23.salbum.data.api.dto.musicbrainz.release.Track
 import com.ichin23.salbum.domain.models.ExternalUrls
+import com.ichin23.salbum.navigation.ScreenName
 import com.ichin23.salbum.ui.components.FiveStarRating
 import kotlinx.coroutines.launch
 
@@ -82,10 +87,14 @@ import kotlinx.coroutines.launch
 fun SharedTransitionScope.AlbumDetailsScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
     albumId: String,
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: AlbumDetailsVM = hiltViewModel()
+    navController: NavHostController,
+    modifier: Modifier = Modifier
 ) {
+    val albumFlowEntry = remember(navController.currentBackStackEntry){
+        navController.getBackStackEntry(ScreenName.ALBUM_FLOW)
+    }
+
+    val viewModel: AlbumDetailsVM = hiltViewModel(albumFlowEntry)
     //val albumDetail by viewModel.albumDetails.collectAsStateWithLifecycle()
     val albumTest by viewModel.albumTest.collectAsStateWithLifecycle()
     val ratings by viewModel.reviews.collectAsStateWithLifecycle()
@@ -94,6 +103,10 @@ fun SharedTransitionScope.AlbumDetailsScreen(
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
     var ratingValue by remember { mutableDoubleStateOf(0.toDouble()) }
+
+    LaunchedEffect(Unit) {
+        viewModel.findAlbum()
+    }
 
     albumTest?.let { it ->
         ConstraintLayout(
@@ -119,16 +132,16 @@ fun SharedTransitionScope.AlbumDetailsScreen(
             ) {
                 item {
                     AlbumFolderDetails(
-                        albumTest!!, modifier = Modifier
+                        albumTest!!.release, modifier = Modifier
                             .fillMaxWidth()
                             .sharedElement(
-                                rememberSharedContentState(key = "album-${albumTest!!.id}"),
+                                rememberSharedContentState(key = "album-${albumTest!!.release.id}"),
                                 animatedVisibilityScope = animatedVisibilityScope
                             )
                     )
                 }
 
-                items(albumTest!!.artistCredit) { artist ->
+                items(albumTest!!.release.artistCredit) { artist ->
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
@@ -197,24 +210,33 @@ fun SharedTransitionScope.AlbumDetailsScreen(
                             Column(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                AlbumInfoTag("Lançamento", albumTest!!.date)
-                                AlbumInfoTag("Status", albumTest!!.status)
-                                AlbumInfoTag("País", albumTest!!.country)
-                                AlbumInfoTag("MBID", albumTest!!.id)
+                                AlbumInfoTag("Lançamento", albumTest!!.release.date)
+                                AlbumInfoTag("Status", albumTest!!.release.status)
+                                AlbumInfoTag("País", albumTest!!.release.country)
+                                AlbumInfoTag("MBID", albumTest!!.release.id)
                             }
                         }
                     }
                 }
                 item{
-                    Text("Músicas", modifier = Modifier.clickable{
-
-                    })
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp)
+                            .clickable{
+                                navController.navigate(ScreenName.MUSICS_SCREEN)
+                            },
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ){
+                        Text("Músicas", modifier = Modifier.clickable{})
+                        Icon(Icons.Default.KeyboardArrowRight, "")
+                    }
                 }
                 item {
                     Column {
-                        if(albumTest!!.relations.isNotEmpty()){
-                            ListenExternal(ExternalUrls(albumTest!!.relations.first().url.toString()) )
-                        }
+//                        if(albumTest!!.release.relations.isNotEmpty()){
+//                            ListenExternal(ExternalUrls(albumTest!!.release.relations.first().url.toString()) )
+//                        }
                         Text(
                             "Reviews",
                             modifier = Modifier.padding(horizontal = 20.dp, vertical = 15.dp),
@@ -223,10 +245,10 @@ fun SharedTransitionScope.AlbumDetailsScreen(
                     }
                 }
 
-                itemsIndexed(items = ratings) { index, item ->
-                    RatingCardHome(item)
+                itemsIndexed(albumTest!!.ratings) { index, item ->
+                    RatingCardHome(item, {  }, albumTest!!.release.links.first{it.rel=="image"}.href)
                     // Adicione um Spacer para criar um espaço entre os itens
-                    if (index < ratings.lastIndex) {
+                    if (index < albumTest!!.ratings.lastIndex) {
                         Spacer(modifier = Modifier.width(16.dp))
                     }
                 }
@@ -247,7 +269,7 @@ fun SharedTransitionScope.AlbumDetailsScreen(
                     contentDescription = "Botão voltar",
                     modifier = Modifier
                         .clickable {
-                            onBack()
+                            navController.popBackStack()
                         }
                         .padding(12.dp)
                         .size(30.dp)
@@ -255,19 +277,22 @@ fun SharedTransitionScope.AlbumDetailsScreen(
             }
 
             Box(
-                modifier = Modifier.clip(RoundedCornerShape(12.dp))
-                    .constrainAs (floatingButton){
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .constrainAs(floatingButton) {
                         bottom.linkTo(parent.bottom, margin = 20.dp)
                         end.linkTo(parent.end, margin = 20.dp)
                     }
-                    .clickable{showBottomSheet=true}
+                    .clickable { showBottomSheet = true }
                     .background(BluePrimary)
             ){
                 Image(
                     imageVector = ImageVector.vectorResource(R.drawable.add),
                     contentDescription = "Add Review",
                     colorFilter = ColorFilter.tint(LightGreyText),
-                    modifier = Modifier.padding(20.dp).size(22.dp)
+                    modifier = Modifier
+                        .padding(20.dp)
+                        .size(22.dp)
                 )
             }
         }
@@ -275,21 +300,27 @@ fun SharedTransitionScope.AlbumDetailsScreen(
 
     if(showBottomSheet){
         val loadingSend by viewModel.loadingSendRating.collectAsStateWithLifecycle()
+        albumTest?.userRating?.let {
+            ratingValue = it.rate.toDouble()
+        }
         ModalBottomSheet(
             onDismissRequest = {showBottomSheet=false},
             sheetState = sheetState
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
 
             ) {
-                Text("Sua avaliação para ${albumTest!!.title}", style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp))
+                Text("Sua avaliação para ${albumTest!!.release.title}", style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp))
                 Spacer(Modifier.height(8.dp))
                 FiveStarRating(ratingValue, {ratingValue=it}, modifier = Modifier.align(Alignment.CenterHorizontally), starSize = 40.dp)
                 Spacer(Modifier.height(8.dp))
                 Button({
                     viewModel.onEvent(AlbumDetailsEvent.SendReviewAlbum(ratingValue))
                     scope.launch {
+                        viewModel.findAlbum()
                         sheetState.hide()
                     }.invokeOnCompletion {
                         if(!sheetState.isVisible){

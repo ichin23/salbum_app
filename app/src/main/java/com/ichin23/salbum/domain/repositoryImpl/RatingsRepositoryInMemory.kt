@@ -24,7 +24,7 @@ class RatingsRepositoryInMemory: RatingsRepository {
         gsonBuilder.registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
 
         val customGson = gsonBuilder.create()
-        ratings = customGson.fromJson(ratingsJSON, typeTokenRating)
+        //ratings = customGson.fromJson(ratingsJSON, typeTokenRating)
     }
 
     override fun getAllRatings(): List<Ratings> {

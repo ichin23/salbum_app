@@ -65,29 +65,29 @@ fun SharedTransitionScope.HomeScreen(
                 LazyColumn {
 
 
-                    item {
-                        Text(
-                            "Lançamentos Recentes",
-                            modifier = Modifier.padding(horizontal = 20.dp),
-                            style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp)
-                        )
-                    }
-                    item { Spacer(Modifier.height(15.dp)) }
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .horizontalScroll(rememberScrollState())
-                                .padding(horizontal = 20.dp)
-                        ) {
-                            albums.forEachIndexed { index, item ->
-                                AlbumHomeComponent(animatedVisibilityScope, item, onClick)
-                                // Adicione um Spacer para criar um espaço entre os itens
-                                if (index < albums.lastIndex) {
-                                    Spacer(modifier = Modifier.width(16.dp))
-                                }
-                            }
-                        }
-                    }
+//                    item {
+//                        Text(
+//                            "Lançamentos Recentes",
+//                            modifier = Modifier.padding(horizontal = 20.dp),
+//                            style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp)
+//                        )
+//                    }
+//                    item { Spacer(Modifier.height(15.dp)) }
+//                    item {
+//                        Row(
+//                            modifier = Modifier
+//                                .horizontalScroll(rememberScrollState())
+//                                .padding(horizontal = 20.dp)
+//                        ) {
+//                            albums.forEachIndexed { index, item ->
+//                                AlbumHomeComponent(animatedVisibilityScope, item, onClick)
+//                                // Adicione um Spacer para criar um espaço entre os itens
+//                                if (index < albums.lastIndex) {
+//                                    Spacer(modifier = Modifier.width(16.dp))
+//                                }
+//                            }
+//                        }
+//                    }
                     item { Spacer(Modifier.height(10.dp)) }
                     item {
                         Text(
@@ -97,11 +97,13 @@ fun SharedTransitionScope.HomeScreen(
                         )
                     }
                     item { Spacer(Modifier.height(15.dp)) }
-                    itemsIndexed(ratings) { index, item ->
-                        RatingCardHome(item)
-                        // Adicione um Spacer para criar um espaço entre os itens
-                        if (index < ratings.lastIndex) {
-                            Spacer(modifier = Modifier.width(16.dp))
+                    if (ratings!=null){
+                        itemsIndexed(ratings!!.embedded.ratings) { index, item ->
+                            RatingCardHome(item, onClick, null)
+                            // Adicione um Spacer para criar um espaço entre os itens
+                            if (index < ratings!!.embedded.ratings.lastIndex) {
+                                Spacer(modifier = Modifier.width(16.dp))
+                            }
                         }
                     }
                 }

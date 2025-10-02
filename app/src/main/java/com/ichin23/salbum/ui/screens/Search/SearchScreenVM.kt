@@ -8,6 +8,7 @@ import com.ichin23.salbum.data.api.APIMusicBrainzService
 import com.ichin23.salbum.data.api.APIReleasesImagesService
 import com.ichin23.salbum.data.api.ApiSalbumService
 import com.ichin23.salbum.data.api.dto.musicbrainz.releaseGroup.ReleaseGroup
+import com.ichin23.salbum.data.api.dto.salbum.musicmetadata.MusicMetadataCacheDTO
 import com.ichin23.salbum.domain.models.Album
 import com.ichin23.salbum.domain.repository.AlbumRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +30,7 @@ class SearchScreenVM @Inject constructor(
     var _searchResult = MutableStateFlow<List<Album>>(arrayListOf())
     var searchResult = _searchResult.asStateFlow()
 
-    var _searchTest = MutableStateFlow<List<ReleaseGroup>>(arrayListOf())
+    var _searchTest = MutableStateFlow<List<MusicMetadataCacheDTO>>(arrayListOf())
     var searchTest = _searchTest.asStateFlow()
 
     var _loading = MutableStateFlow<Boolean>(false)
@@ -39,7 +40,7 @@ class SearchScreenVM @Inject constructor(
         viewModelScope.launch {
             _loading.value = true
             try {
-                val response = salbumService.searchAlbum(query)
+                val response = salbumService.search(query)
 
 //                response.releaseGroups.forEach {
 //                    try{
@@ -49,7 +50,7 @@ class SearchScreenVM @Inject constructor(
 //                    }
 //                }
 
-                _searchTest.value = response.releaseGroups;
+                _searchTest.value = response;
                 Log.i("Response:", _searchTest.value.toString())
             }catch (e: HttpException){
                 Log.e("Req error", e.response()?.raw()?.request?.headers.toString())

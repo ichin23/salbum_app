@@ -53,11 +53,12 @@ import com.ichin23.salbum.ui.theme.GreenSecondary
 import com.ichin23.salbum.ui.theme.WhiteText
 import com.ichin23.salbum.R
 import com.ichin23.salbum.core.utils.UiEvent
+import com.ichin23.salbum.navigation.ScreenName
 import com.ichin23.salbum.ui.theme.BackgroundLighterDark
 
 @Composable
 fun LoginScreen(
-    onNavigate: ()-> Unit,
+    onNavigate: (route: String)-> Unit,
     viewModel: LoginScreenVM = hiltViewModel<LoginScreenVM>(),
     modifier: Modifier = Modifier
 ){
@@ -66,7 +67,7 @@ fun LoginScreen(
     LaunchedEffect(true) {
         viewModel.uiEvent.collect {event ->
             when(event){
-                is UiEvent.Navigate -> onNavigate()
+                is UiEvent.Navigate -> onNavigate(event.route)
                 UiEvent.PopBackStack -> TODO()
                 is UiEvent.ShowSnackBar -> TODO()
             }
@@ -144,7 +145,7 @@ fun LoginScreen(
                     }
                 }
 
-                TextButton({}) {
+                TextButton({viewModel.onEvent(LoginEvents.OnSignupClick)}) {
                     Text("Criar Conta", color = GreenSecondary)
                 }
             }

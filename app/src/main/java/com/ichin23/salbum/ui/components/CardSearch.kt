@@ -21,16 +21,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.ichin23.salbum.data.api.dto.musicbrainz.releaseGroup.ReleaseGroup
+import com.ichin23.salbum.data.api.dto.salbum.musicmetadata.MusicMetadataCacheDTO
 import com.ichin23.salbum.ui.theme.Inter
 
 @Composable
-fun CardSearch(album: ReleaseGroup ,modifier: Modifier = Modifier) {
+fun CardSearch(item: MusicMetadataCacheDTO, modifier: Modifier = Modifier) {
     Row(
         modifier=modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
         AsyncImage(
-            model=album.links.find { link ->link.rel=="image" }?.href,
-            contentDescription = "Cada de ${album.title}",
+            model=item.links.find { link ->link.rel=="image" }?.href,
+            contentDescription = "Cada de ${item.title}",
             modifier=Modifier
                 .clip(RoundedCornerShape(12.dp))
                 .size(70.dp)
@@ -41,7 +42,7 @@ fun CardSearch(album: ReleaseGroup ,modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                album.title,
+                item.title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = TextStyle(

@@ -2,6 +2,8 @@ package com.ichin23.salbum.ui.screens.Home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ichin23.salbum.data.api.ApiSalbumService
+import com.ichin23.salbum.data.api.dto.salbum.rating.LatestOneDTO
 import com.ichin23.salbum.domain.models.Album
 import com.ichin23.salbum.domain.models.Ratings
 import com.ichin23.salbum.domain.repository.AlbumRepository
@@ -14,12 +16,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class HomeScreenVM @Inject constructor(val albumRepository: AlbumRepository, val ratingsRepository: RatingsRepository): ViewModel() {
+class HomeScreenVM @Inject constructor(
+    val albumRepository: AlbumRepository,
+    val salbumService: ApiSalbumService,
+    val ratingsRepository: RatingsRepository
+): ViewModel() {
 
     var _albumsList = MutableStateFlow<List<Album>>(arrayListOf())
     var albums = _albumsList.asStateFlow();
 
-    val _ratingsList = MutableStateFlow<List<Ratings>>(arrayListOf())
+    val _ratingsList = MutableStateFlow<LatestOneDTO?>(null)
     var ratings = _ratingsList.asStateFlow()
 
     val _refreshing = MutableStateFlow<Boolean>(false)
@@ -28,16 +34,14 @@ class HomeScreenVM @Inject constructor(val albumRepository: AlbumRepository, val
     //var ratings: List<Ratings> by mutableStateOf(arrayListOf())
 
     init{
-        _albumsList.value=albumRepository.getAllAlbums()
-        _ratingsList.value=ratingsRepository.getAllRatings()
+        refresh()
     }
 
     fun refresh(){
         viewModelScope.launch {
             _refreshing.value = true
-            delay(1000)
             _albumsList.value=albumRepository.getAllAlbums()
-            _ratingsList.value=ratingsRepository.getAllRatings()
+            _ratingsList.value=salbumService.getLatestOne()
             _refreshing.value=false
         }
     }

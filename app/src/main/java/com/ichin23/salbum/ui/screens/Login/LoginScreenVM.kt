@@ -48,6 +48,7 @@ class LoginScreenVM @Inject constructor(
             is LoginEvents.OnPasswordChange -> passwordState=event.password
             LoginEvents.OnLoginClick -> onSendLogin()
             LoginEvents.OnShowPasswordClick -> showPassword=!showPassword
+            LoginEvents.OnSignupClick -> sendUiEvent(UiEvent.Navigate(ScreenName.SIGNUP_SCREEN))
         }
     }
 

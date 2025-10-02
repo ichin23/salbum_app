@@ -48,24 +48,36 @@ class AuthViewModel @Inject constructor(
        initialValue = UserState.getDefaultInstance()
    )
 
+    init {
+        viewModelScope.launch {
+            checkInitialAuthState()
+        }
+    }
+
+    val _isLoggedIn = MutableStateFlow<AuthState>(AuthState.Loading)
+    val isLoggedIn = _isLoggedIn.asStateFlow()
 
 
-    val isLoggedIn: StateFlow<AuthState> = flow<AuthState> {
-        emit(checkInitialAuthState())
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = AuthState.Loading
-    )
+//    val isLoggedIn: StateFlow<AuthState> = flow<AuthState> {
+//        emit(AuthState.Loading)
+//
+//        val result = checkInitialAuthState()
+//
+//        emit(result)
+//    }.stateIn(
+//        scope = viewModelScope,
+//        started = SharingStarted.Eagerly,
+//        initialValue = AuthState.Loading
+//    )
 
-    suspend fun checkInitialAuthState(): AuthState {
+    suspend fun checkInitialAuthState() {
         // .first() é a chave. Ele espera o primeiro valor REAL do DataStore ser emitido.
         val userState = userStateDataStore.data.first()
 
-        return if (userState.accessToken.value.isNotEmpty()) {
-            AuthState.Authenticated
+        if (userState.accessToken.value.isNotEmpty()) {
+            _isLoggedIn.value = AuthState.Authenticated
         } else {
-            AuthState.Unauthenticated
+            _isLoggedIn.value = AuthState.Unauthenticated
         }
     }
 

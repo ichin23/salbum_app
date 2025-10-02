@@ -1,6 +1,8 @@
 package com.ichin23.salbum.data.api
 
+import androidx.datastore.core.DataStore
 import com.google.gson.GsonBuilder
+import com.ichin23.salbum.core.datastore.UserStateOuterClass.UserState
 import com.ichin23.salbum.core.utils.LocalDateTimeDeserializer
 import dagger.Module
 import dagger.Provides
@@ -18,7 +20,14 @@ object NetworkModule {
 
     private const val MUSICBRAINZ_API_URL = "https://musicbrainz.org/ws/2/";
     private const val IMAGES_API_URL = "https://coverartarchive.org/";
-    private const val SALBUM_API_URL = "http://192.168.1.23:8080/";
+    private const val SALBUM_API_URL = "http://192.168.1.2:8080/";
+//    private const val SALBUM_API_URL = "http://200.128.157.11:8080/";
+
+    @Provides
+    @Singleton
+    fun provideAuthInterceptor(
+        userStateDataStore: DataStore<UserState>
+    ): ApiSalbumInterceptor = ApiSalbumInterceptor(userStateDataStore)
 
     @Provides
     @Singleton
@@ -29,6 +38,13 @@ object NetworkModule {
                 .build()
             chain.proceed(request)
         }.build()
+    }
+
+    @SalbumAPI
+    @Provides
+    @Singleton
+    fun provideOkHttpClientSalbum(authInterceptor: ApiSalbumInterceptor): OkHttpClient{
+        return OkHttpClient.Builder().addInterceptor(authInterceptor).build()
     }
 
     @MusicBrainzApi
@@ -66,7 +82,7 @@ object NetworkModule {
     @SalbumAPI
     @Provides
     @Singleton
-    fun provideSalbumRetrofit(okHttpClient: OkHttpClient): Retrofit{
+    fun provideSalbumRetrofit(@SalbumAPI okHttpClient: OkHttpClient): Retrofit{
         val gsonBuilder = GsonBuilder()
         gsonBuilder.registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
 

@@ -13,7 +13,11 @@ object ScreenName {
     // MAIN ROUTE GRAPH
     const val MAIN_ROUTE = "main"
     const val HOME_SCREEN = "home"
-    const val DETAIL_ALBUM = "album"
     const val SEARCH_SCREEN = "search"
     const val PROFILE_SCREEN = "profile"
+
+    // ALBUM FLOW GRAPH
+    const val ALBUM_FLOW = "album_flow"
+    const val DETAIL_ALBUM = "album"
+    const val MUSICS_SCREEN = "musics"
 }

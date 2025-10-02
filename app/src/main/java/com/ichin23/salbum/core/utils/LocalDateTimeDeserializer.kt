@@ -11,6 +11,7 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
 import com.google.gson.JsonParseException
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class LocalDateTimeDeserializer : JsonDeserializer<LocalDateTime> {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -28,11 +29,12 @@ class LocalDateTimeDeserializer : JsonDeserializer<LocalDateTime> {
                 return localDate.atStartOfDay()
             }
 
-            // Primeiro, parse para OffsetDateTime para lidar com o fuso horário
-            val offsetDateTime = OffsetDateTime.parse(jsonString)
+             //Primeiro, parse para OffsetDateTime para lidar com o fuso horário
+             val offsetDateTime = OffsetDateTime.parse(jsonString, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 
             // Converte para LocalDateTime
-            return offsetDateTime.toLocalDateTime()
+            //return LocalDateTime.parse(jsonString)
+            return offsetDateTime.toLocalDateTime();
 
         } catch (e: DateTimeParseException) {
             // Lida com erros de formato de data

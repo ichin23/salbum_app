@@ -24,32 +24,32 @@ import com.ichin23.salbum.navigation.ScreenName
 import com.ichin23.salbum.R
 
 @Composable
-fun SplashScreen(navController: NavHostController, modifier: Modifier = Modifier) {
-    val authViewModel: AuthViewModel = hiltViewModel()
+fun SplashScreen(modifier: Modifier = Modifier) {
+    //val authViewModel: AuthViewModel = hiltViewModel()
 
-    // LaunchedEffect executa o bloco de código quando o `authState` muda
-    LaunchedEffect(Unit) {
-        val authState = authViewModel.checkInitialAuthState()
-        Log.i("AuthChange", authState.toString())
-        // Espera o authState deixar de ser Loading
-        when (authState) {
-            is AuthState.Authenticated -> {
-                // Navega para a tela principal e limpa a splash da pilha
-                navController.navigate(ScreenName.MAIN_ROUTE) {
-                    popUpTo(ScreenName.SPLASH_SCREEN) { inclusive = true }
-                }
-            }
-            is AuthState.Unauthenticated -> {
-                // Navega para o fluxo de login e limpa a splash da pilha
-                navController.navigate(ScreenName.AUTH_ROUTE) {
-                    popUpTo(ScreenName.SPLASH_SCREEN) { inclusive = true }
-                }
-            }
-            is AuthState.Loading -> {
-                // Não faz nada, apenas continua mostrando a UI de loading
-            }
-        }
-    }
+//    // LaunchedEffect executa o bloco de código quando o `authState` muda
+//    LaunchedEffect(Unit) {
+//        val authState = authViewModel.checkInitialAuthState()
+//        Log.i("AuthChange", authState.toString())
+//        // Espera o authState deixar de ser Loading
+//        when (authState) {
+//            is AuthState.Authenticated -> {
+//                // Navega para a tela principal e limpa a splash da pilha
+//                navController.navigate(ScreenName.MAIN_ROUTE) {
+//                    popUpTo(ScreenName.SPLASH_SCREEN) { inclusive = true }
+//                }
+//            }
+//            is AuthState.Unauthenticated -> {
+//                // Navega para o fluxo de login e limpa a splash da pilha
+//                navController.navigate(ScreenName.AUTH_ROUTE) {
+//                    popUpTo(ScreenName.SPLASH_SCREEN) { inclusive = true }
+//                }
+//            }
+//            is AuthState.Loading -> {
+//                // Não faz nada, apenas continua mostrando a UI de loading
+//            }
+//        }
+//    }
 
     // A UI da Splash Screen
     Box(

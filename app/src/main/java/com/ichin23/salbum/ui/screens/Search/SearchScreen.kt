@@ -123,7 +123,7 @@ fun SearchScreen(focus:Boolean, onFocusHandled:() ->Unit, onNavigate: (idAlbum:S
                             items(searchTest.value) {
                                 //Text(it.title)
                                 CardSearch(it, modifier = Modifier.clickable{
-                                    onNavigate(it.releases.first().id)
+                                    onNavigate(it.id)
                                 })
                             }
                         }

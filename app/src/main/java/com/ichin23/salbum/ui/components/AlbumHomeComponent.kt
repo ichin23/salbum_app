@@ -44,7 +44,7 @@ fun SharedTransitionScope.AlbumHomeComponent(
         val (backgroundImage, gradient, name, artists) = createRefs()
 
         AsyncImage(
-            model=album.images.first().url,
+            model=album.imagesUrl,
             contentDescription = "Cada de ${album.name}",
             modifier=Modifier
                 .clip(RoundedCornerShape(12.dp))

@@ -29,15 +29,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen().apply {
             setKeepOnScreenCondition {
-                // A splash screen continuará visível ENQUANTO
-                // o estado for 'Loading'. Quando mudar, ela desaparecerá.
-                viewModel.isLoggedIn.value is AuthState.Loading
+                val logged = viewModel.isLoggedIn.value
+                !(logged is AuthState.Authenticated || logged is AuthState.Unauthenticated)
             }
         }
         enableEdgeToEdge()
         setContent {
             SalbumTheme {
-                AppNavigation()
+                AppNavigation(viewModel)
             }
         }
     }

@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.log
 
 @HiltViewModel
 class ProfileScreenVM @Inject constructor(
@@ -33,6 +34,20 @@ class ProfileScreenVM @Inject constructor(
     init{
         _currentUser.value = userRepository.getCurrentUser()
         _ratings.value=ratingsRepository.getRatingsByUser(currentUser.value!!.id)
+    }
+
+    fun onEvent(event: ProfileEvents){
+        when(event){
+            ProfileEvents.OnLogout -> logout()
+        }
+    }
+
+    private fun logout(){
+        viewModelScope.launch {
+            userStateDataStore.updateData {current->
+                UserStateOuterClass.UserState.getDefaultInstance()
+            }
+        }
     }
 
     fun refresh(){

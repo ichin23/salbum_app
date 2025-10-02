@@ -10,6 +10,8 @@ import com.ichin23.salbum.data.api.APIReleasesImagesService
 import com.ichin23.salbum.data.api.ApiSalbumService
 import com.ichin23.salbum.data.api.MusicBrainzApi
 import com.ichin23.salbum.data.api.dto.musicbrainz.release.ReleaseDTO
+import com.ichin23.salbum.data.api.dto.salbum.ReleaseDetailsDTO
+import com.ichin23.salbum.data.api.dto.salbum.rating.SendRatingDTO
 import com.ichin23.salbum.domain.models.Album
 import com.ichin23.salbum.domain.models.Ratings
 import com.ichin23.salbum.domain.repository.AlbumRepository
@@ -36,8 +38,7 @@ class AlbumDetailsVM @Inject constructor(
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
-    private val albumIdArg: String? = savedStateHandle.get<String>("albumId") ?:
-    throw IllegalArgumentException("Album ID is required")
+    private val albumIdArg: String? = savedStateHandle.get<String>("albumId")
 
     private val _loadingSendRating = MutableStateFlow<Boolean>(false)
     val loadingSendRating: StateFlow<Boolean> = _loadingSendRating.asStateFlow()
@@ -45,45 +46,48 @@ class AlbumDetailsVM @Inject constructor(
     private val _albumDetails = MutableStateFlow<Album?>(null)
     val albumDetails: StateFlow<Album?> = _albumDetails.asStateFlow()
 
-    private val _albumTest = MutableStateFlow<ReleaseDTO?>(null)
-    val albumTest: StateFlow<ReleaseDTO?> = _albumTest.asStateFlow()
+    private val _albumTest = MutableStateFlow<ReleaseDetailsDTO?>(null)
+    val albumTest: StateFlow<ReleaseDetailsDTO?> = _albumTest.asStateFlow()
 
     private val _albumReviews = MutableStateFlow<List<Ratings>>(arrayListOf())
     val reviews: StateFlow<List<Ratings>> = _albumReviews.asStateFlow()
-
-    init{
-        findAlbum(albumIdArg)
-        loadRatings(albumIdArg)
-    }
 
     fun onEvent(event: AlbumDetailsEvent){
         when(event){
             is AlbumDetailsEvent.SendReviewAlbum -> {
                 viewModelScope.launch {
                     _loadingSendRating.value = true
-                    val rating = Ratings(
-                        rate = event.rate,
-                        user = userRepository.getCurrentUser()!!,
-                        album = albumDetails.value!!,
-                        updatedAt = LocalDateTime.now(),
-                        createdAt = LocalDateTime.now()
-                    )
-                    delay(1000)
-                    ratingsRepository.addRating(rating)
-                    loadRatings(_albumDetails.value!!.id)
+//                    val rating = Ratings(
+//                        rate = event.rate,
+//                        user = userRepository.getCurrentUser()!!,
+//                        album = albumDetails.value!!,
+//                        updatedAt = LocalDateTime.now(),
+//                        createdAt = LocalDateTime.now()
+//                    )
+//                    delay(1000)
+//                    ratingsRepository.addRating(rating)
+                    //loadRatings(_albumDetails.value!!.id)
+                    Log.i("AlbumID: ", albumTest.value!!.release.id)
+                    if (albumTest.value!!.userRating!=null){
+                        salbumService.updateRating(SendRatingDTO(albumTest.value!!.release.id, event.rate));
+                    }else{
+                        salbumService.createRating(SendRatingDTO(albumTest.value!!.release.id, event.rate))
+                    }
                     _loadingSendRating.value=false
                 }
             }
         }
     }
 
-    private fun findAlbum(albumId:String?){
-        if(albumId!=null){
+    fun findAlbum(){
+       albumIdArg?.let{albumIdArg ->
             viewModelScope.launch {
                 try {
+                    Log.i("AlbumID", albumIdArg)
 
-
-                    _albumTest.value = salbumService.getAlbum(albumId)
+                    _albumTest.value = salbumService.getReleaseDetails(albumIdArg)
+                    Log.i("Artists", albumTest.value.toString())
+                    Log.i("Artists", albumTest.value!!.release.artistCredit.toString())
                     //_albumTest.value?.image = imagesService.getImages(albumId).images.first().image
                 }catch (e: HttpException){
                     Log.e("Req error", e.response()?.raw()?.request?.headers.toString())
@@ -94,7 +98,9 @@ class AlbumDetailsVM @Inject constructor(
 
             //_albumDetails.value = albumRepository.getAlbumByID(albumId)
             }
-        }
+        } ?: run {
+            Log.w("AlbumDetailsVM", "AlbumID is null")
+       }
     }
 
     private fun loadRatings(albumId: String?){

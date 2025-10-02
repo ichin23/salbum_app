@@ -1,6 +1,7 @@
 package com.ichin23.salbum.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,19 +30,20 @@ import androidx.constraintlayout.compose.Dimension
 import coil3.compose.AsyncImage
 import com.ichin23.salbum.domain.models.Ratings
 import com.ichin23.salbum.R;
+import com.ichin23.salbum.data.api.dto.salbum.rating.RatingDTO
 import com.ichin23.salbum.ui.theme.WhiteText
 
 @Composable
-fun RatingCardHome(rating: Ratings, modifier: Modifier = Modifier) {
+fun RatingCardHome(rating: RatingDTO, onClick: (id:String)->Unit, imageUrl: String?, modifier: Modifier = Modifier) {
     Row(
         modifier=modifier.fillMaxWidth().padding(12.dp),
         horizontalArrangement = Arrangement.Absolute.SpaceBetween
     ) {
-        if (rating.user.imageUrl==null){
+        if (rating.user.image_url==null){
             Icon(Icons.Default.Person, contentDescription = "Ícone pessoa", Modifier.size(40.dp))
         }else{
             AsyncImage(
-                model=rating.user.imageUrl,
+                model=rating.user.image_url,
                 contentDescription = "Foto de ${rating.user.username}",
                 modifier=Modifier.clip(CircleShape)
             )
@@ -59,7 +61,8 @@ fun RatingCardHome(rating: Ratings, modifier: Modifier = Modifier) {
                     imageVector = ImageVector.vectorResource(R.drawable.like_outlined),
                     modifier = Modifier.size(20.dp),
                     colorFilter = ColorFilter.tint(WhiteText),
-                    contentDescription = "Botão like"
+                    contentDescription = "Botão like",
+
                 )
                 Spacer(Modifier.width(8.dp))
                 Text("587")
@@ -77,11 +80,13 @@ fun RatingCardHome(rating: Ratings, modifier: Modifier = Modifier) {
         }
         Spacer(Modifier.width(8.dp))
         AsyncImage(
-            model=rating.album.images.first().url,
-            contentDescription = "Capa de ${rating.album.name}",
+            model=imageUrl ?: rating.links.image.href,
+            contentDescription = "Capa de ${rating.album}",
             modifier=Modifier
                 .size(100.dp)
-                .clip(RoundedCornerShape(12.dp))
+                .clip(RoundedCornerShape(12.dp)).clickable{
+                    onClick(rating.album)
+                }
         )
     }
 }
