@@ -1,11 +1,12 @@
 package com.ichin23.salbum.di
 
+import com.ichin23.salbum.data.api.ApiSalbumService
 import com.ichin23.salbum.domain.repository.AlbumRepository
 import com.ichin23.salbum.domain.repository.RatingsRepository
 import com.ichin23.salbum.domain.repository.UserRepository
-import com.ichin23.salbum.domain.repositoryImpl.AlbumRepositoryInMemory
-import com.ichin23.salbum.domain.repositoryImpl.RatingsRepositoryInMemory
-import com.ichin23.salbum.domain.repositoryImpl.UserRepostioryInMemory
+import com.ichin23.salbum.domain.repositoryImpl.AlbumRepositoryImpl
+import com.ichin23.salbum.domain.repositoryImpl.RatingsRepositoryImpl
+import com.ichin23.salbum.domain.repositoryImpl.UserRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,19 +19,19 @@ object AppModule{
 
     @Provides
     @Singleton
-    fun provideAlbumRepository(): AlbumRepository{
-        return AlbumRepositoryInMemory()
+    fun provideAlbumRepository(apiSalbumService: ApiSalbumService): AlbumRepository{
+        return AlbumRepositoryImpl(apiSalbumService)
     }
 
     @Provides
     @Singleton
-    fun provideRatingsRepository(): RatingsRepository{
-        return RatingsRepositoryInMemory();
+    fun provideRatingsRepository(apiSalbumService: ApiSalbumService): RatingsRepository{
+        return RatingsRepositoryImpl(apiSalbumService);
     }
 
     @Provides
     @Singleton
-    fun provideUsersRepository(): UserRepository{
-        return UserRepostioryInMemory();
+    fun provideUsersRepository(userStateDataStore: androidx.datastore.core.DataStore<com.ichin23.salbum.core.datastore.UserStateOuterClass.UserState>): UserRepository{
+        return UserRepositoryImpl(userStateDataStore);
     }
 }

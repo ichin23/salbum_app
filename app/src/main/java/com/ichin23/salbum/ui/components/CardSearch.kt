@@ -59,3 +59,39 @@ fun CardSearch(item: MusicMetadataCacheDTO, modifier: Modifier = Modifier) {
         }
     }
 }
+
+@Composable
+fun CardSearch(item: ReleaseGroup, modifier: Modifier = Modifier) {
+    Row(
+        modifier=modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp)
+    ) {
+        AsyncImage(
+            model=item.links.find { link ->link.rel=="image" }?.href,
+            contentDescription = "Cada de ${item.title}",
+            modifier=Modifier
+                .clip(RoundedCornerShape(12.dp))
+                .size(70.dp)
+        )
+        Spacer(Modifier.width(10.dp))
+        Column(
+            modifier = Modifier.height(70.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                item.title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = TextStyle(
+                    fontFamily = Inter,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 18.sp,
+                    lineHeight = 16.sp,
+                    letterSpacing = 0.3.sp
+                ),
+            )
+//            Text(album.artists.joinToString(separator = ", ") { it -> it.name },
+//                    style = MaterialTheme.typography.bodySmall,
+//                color = LightGreyText)
+        }
+    }
+}

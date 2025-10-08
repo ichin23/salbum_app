@@ -78,6 +78,7 @@ import com.ichin23.salbum.ui.theme.WhiteText
 import com.ichin23.salbum.R
 import com.ichin23.salbum.data.api.dto.musicbrainz.release.Track
 import com.ichin23.salbum.domain.models.ExternalUrls
+import com.ichin23.salbum.domain.models.AlbumDetails
 import com.ichin23.salbum.navigation.ScreenName
 import com.ichin23.salbum.ui.components.FiveStarRating
 import kotlinx.coroutines.launch
@@ -95,9 +96,7 @@ fun SharedTransitionScope.AlbumDetailsScreen(
     }
 
     val viewModel: AlbumDetailsVM = hiltViewModel(albumFlowEntry)
-    //val albumDetail by viewModel.albumDetails.collectAsStateWithLifecycle()
-    val albumTest by viewModel.albumTest.collectAsStateWithLifecycle()
-    val ratings by viewModel.reviews.collectAsStateWithLifecycle()
+    val albumDetails by viewModel.albumDetails.collectAsStateWithLifecycle()
 
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
@@ -108,7 +107,7 @@ fun SharedTransitionScope.AlbumDetailsScreen(
         viewModel.findAlbum()
     }
 
-    albumTest?.let { it ->
+    albumDetails?.let { it ->
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
@@ -132,16 +131,16 @@ fun SharedTransitionScope.AlbumDetailsScreen(
             ) {
                 item {
                     AlbumFolderDetails(
-                        albumTest!!.release, modifier = Modifier
+                        albumDetails!!.release, modifier = Modifier
                             .fillMaxWidth()
                             .sharedElement(
-                                rememberSharedContentState(key = "album-${albumTest!!.release.id}"),
+                                rememberSharedContentState(key = "album-${albumDetails!!.release.id}"),
                                 animatedVisibilityScope = animatedVisibilityScope
                             )
                     )
                 }
 
-                items(albumTest!!.release.artistCredit) { artist ->
+                items(albumDetails!!.release.artistCredit) { artist ->
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
@@ -210,10 +209,10 @@ fun SharedTransitionScope.AlbumDetailsScreen(
                             Column(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                AlbumInfoTag("Lançamento", albumTest!!.release.date)
-                                AlbumInfoTag("Status", albumTest!!.release.status)
-                                AlbumInfoTag("País", albumTest!!.release.country)
-                                AlbumInfoTag("MBID", albumTest!!.release.id)
+                                AlbumInfoTag("Lançamento", albumDetails!!.release.date)
+                                AlbumInfoTag("Status", albumDetails!!.release.status)
+                                albumDetails!!.release.country?.let { AlbumInfoTag("País", albumDetails!!.release.country!!)}
+                                AlbumInfoTag("MBID", albumDetails!!.release.id)
                             }
                         }
                     }
@@ -234,8 +233,8 @@ fun SharedTransitionScope.AlbumDetailsScreen(
                 }
                 item {
                     Column {
-//                        if(albumTest!!.release.relations.isNotEmpty()){
-//                            ListenExternal(ExternalUrls(albumTest!!.release.relations.first().url.toString()) )
+//                        if(albumDetails!!.release.relations.isNotEmpty()){
+//                            ListenExternal(ExternalUrls(albumDetails!!.release.relations.first().url.toString()) )
 //                        }
                         Text(
                             "Reviews",
@@ -245,10 +244,10 @@ fun SharedTransitionScope.AlbumDetailsScreen(
                     }
                 }
 
-                itemsIndexed(albumTest!!.ratings) { index, item ->
-                    RatingCardHome(item, {  }, albumTest!!.release.links.first{it.rel=="image"}.href)
+                itemsIndexed(albumDetails!!.ratings) { index, item ->
+                    RatingCardHome(item, {  }, albumDetails!!.release.links.first{it.rel=="image"}.href)
                     // Adicione um Spacer para criar um espaço entre os itens
-                    if (index < albumTest!!.ratings.lastIndex) {
+                    if (index < albumDetails!!.ratings.lastIndex) {
                         Spacer(modifier = Modifier.width(16.dp))
                     }
                 }
@@ -300,7 +299,7 @@ fun SharedTransitionScope.AlbumDetailsScreen(
 
     if(showBottomSheet){
         val loadingSend by viewModel.loadingSendRating.collectAsStateWithLifecycle()
-        albumTest?.userRating?.let {
+        albumDetails?.userRating?.let {
             ratingValue = it.rate.toDouble()
         }
         ModalBottomSheet(
@@ -313,28 +312,43 @@ fun SharedTransitionScope.AlbumDetailsScreen(
                     .padding(12.dp),
 
             ) {
-                Text("Sua avaliação para ${albumTest!!.release.title}", style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp))
+                Text("Sua avaliação para ${albumDetails!!.release.title}", style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp))
                 Spacer(Modifier.height(8.dp))
                 FiveStarRating(ratingValue, {ratingValue=it}, modifier = Modifier.align(Alignment.CenterHorizontally), starSize = 40.dp)
                 Spacer(Modifier.height(8.dp))
-                Button({
-                    viewModel.onEvent(AlbumDetailsEvent.SendReviewAlbum(ratingValue))
-                    scope.launch {
-                        viewModel.findAlbum()
-                        sheetState.hide()
-                    }.invokeOnCompletion {
-                        if(!sheetState.isVisible){
-                            showBottomSheet=false
-                        }
-                    }
-                },
-                    modifier=Modifier.align(Alignment.End),
-                    enabled = !loadingSend
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if(loadingSend){
-                        CircularProgressIndicator()
-                    }else{
-                        Text("Avaliar")
+                    Button({
+                        if(albumDetails?.inListenList == true){
+                            viewModel.onEvent(AlbumDetailsEvent.RemoveFromListenList)
+                        }else{
+                            viewModel.onEvent(AlbumDetailsEvent.AddToListenList)
+                        }
+                    }) {
+                        Text(if(albumDetails?.inListenList == true) "Remover da listenlist" else "Adicionar à listenlist")
+                    }
+
+                    Button({
+                        viewModel.onEvent(AlbumDetailsEvent.SendReviewAlbum(ratingValue))
+                        scope.launch {
+                            viewModel.findAlbum()
+                            sheetState.hide()
+                        }.invokeOnCompletion {
+                            if(!sheetState.isVisible){
+                                showBottomSheet=false
+                            }
+                        }
+                    },
+                        enabled = !loadingSend
+                    ) {
+                        if(loadingSend){
+                            CircularProgressIndicator()
+                        }else{
+                            Text("Avaliar")
+                        }
                     }
                 }
             }

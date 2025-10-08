@@ -26,7 +26,7 @@ fun MusicsScreen(navController: NavHostController, modifier: Modifier = Modifier
 
     val viewModel: AlbumDetailsVM = hiltViewModel(albumFlowEntry)
 
-    val album = viewModel.albumTest.collectAsStateWithLifecycle()
+    val album = viewModel.albumDetails.collectAsStateWithLifecycle()
     LazyColumn {
         item{
             Icon(Icons.Default.ArrowBack, "", modifier = Modifier.clickable { navController.popBackStack() })

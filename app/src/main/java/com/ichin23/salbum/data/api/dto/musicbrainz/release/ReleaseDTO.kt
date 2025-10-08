@@ -6,7 +6,7 @@ import com.ichin23.salbum.data.api.dto.salbum.utils.LinksHateoas
 data class ReleaseDTO(
     val date: String,
     val barcode: String,
-    val country: String,
+    val country: String?,
     val status:String,
     val title: String,
     val id: String,

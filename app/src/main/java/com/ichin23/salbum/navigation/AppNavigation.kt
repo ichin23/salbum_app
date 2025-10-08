@@ -27,9 +27,9 @@ fun AppNavigation(authViewModel: AuthViewModel) {
     val authState by authViewModel.userState.collectAsStateWithLifecycle()
     val isLoggedIn by authViewModel.isLoggedIn.collectAsStateWithLifecycle()
 
-    authViewModel.isLoggedIn.map {
-        Log.i("Change AuthState", it.toString())
-    }
+//    authViewModel.isLoggedIn.map {
+//        Log.i("Change AuthState", it.toString())
+//    }
 
     val navGraph = navController.createGraph(startDestination = if(isLoggedIn is AuthState.Loading) ScreenName.SPLASH_SCREEN else if (isLoggedIn is AuthState.Unauthenticated) ScreenName.AUTH_ROUTE else ScreenName.MAIN_ROUTE) {
 

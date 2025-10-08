@@ -40,7 +40,7 @@ class HomeScreenVM @Inject constructor(
     fun refresh(){
         viewModelScope.launch {
             _refreshing.value = true
-            _albumsList.value=albumRepository.getAllAlbums()
+            //_albumsList.value=albumRepository.getAllAlbums()
             _ratingsList.value=salbumService.getLatestOne()
             _refreshing.value=false
         }

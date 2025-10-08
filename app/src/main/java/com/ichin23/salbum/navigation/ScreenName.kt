@@ -14,6 +14,7 @@ object ScreenName {
     const val MAIN_ROUTE = "main"
     const val HOME_SCREEN = "home"
     const val SEARCH_SCREEN = "search"
+    const val FULL_SEARCH_SCREEN = "full_search"
     const val PROFILE_SCREEN = "profile"
 
     // ALBUM FLOW GRAPH

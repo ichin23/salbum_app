@@ -21,7 +21,7 @@ object NetworkModule {
     private const val MUSICBRAINZ_API_URL = "https://musicbrainz.org/ws/2/";
     private const val IMAGES_API_URL = "https://coverartarchive.org/";
     private const val SALBUM_API_URL = "http://192.168.1.2:8080/";
-//    private const val SALBUM_API_URL = "http://200.128.157.11:8080/";
+    //private const val SALBUM_API_URL = "http://200.128.157.75:8080/";
 
     @Provides
     @Singleton

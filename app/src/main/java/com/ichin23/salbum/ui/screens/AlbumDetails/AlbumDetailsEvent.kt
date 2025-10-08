@@ -1,5 +1,7 @@
 package com.ichin23.salbum.ui.screens.AlbumDetails
 
 sealed class AlbumDetailsEvent {
-    data class SendReviewAlbum(val rate: Double): AlbumDetailsEvent()
+    data class SendReviewAlbum(val rate: Double) : AlbumDetailsEvent()
+    object AddToListenList : AlbumDetailsEvent()
+    object RemoveFromListenList : AlbumDetailsEvent()
 }

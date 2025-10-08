@@ -8,6 +8,7 @@ import com.ichin23.salbum.data.api.dto.salbum.listenlist.ListenListItemInputDTO
 import com.ichin23.salbum.data.api.dto.salbum.musicmetadata.MusicMetadataCacheDTO
 import com.ichin23.salbum.data.api.dto.salbum.rating.LatestOneDTO
 import com.ichin23.salbum.data.api.dto.salbum.rating.RatingDTO
+import com.ichin23.salbum.data.api.dto.salbum.rating.RatingUserDTO
 import com.ichin23.salbum.data.api.dto.salbum.rating.SendRatingDTO
 import com.ichin23.salbum.data.api.dto.salbum.user.LoginDTO
 import com.ichin23.salbum.data.api.dto.salbum.user.RefreshTokenOut
@@ -33,6 +34,9 @@ interface ApiSalbumService {
     @POST("/auth/refreshToken")
     suspend fun refreshToken(@Body refreshToken: RefreshTokenOut): LoginDTO
 
+    @GET("/users/me")
+    suspend fun getMe(): UserDTO
+
     @GET("/search")
     suspend fun search(@Query("q") q: String): List<MusicMetadataCacheDTO>
 
@@ -55,10 +59,10 @@ interface ApiSalbumService {
     suspend fun updateRating(@Body rating: SendRatingDTO): RatingDTO
 
     @GET("/ratings/album/{id}")
-    suspend fun getRatingsByAlbum(@Path("id") id: String)
+    suspend fun getRatingsByAlbum(@Path("id") id: String): List<RatingDTO>
 
     @GET("/ratings/user/{id}")
-    suspend fun getRatingsByUser(@Path("id") id: String)
+    suspend fun getRatingsByUser(@Path("id") id: String): List<RatingUserDTO>
 
     @GET("/listenlist")
     suspend fun getMyListenList(): List<ListenListItem>

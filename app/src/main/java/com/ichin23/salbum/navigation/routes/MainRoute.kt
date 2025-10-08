@@ -36,6 +36,7 @@ import com.ichin23.salbum.ui.screens.Search.SearchScreen
 import com.ichin23.salbum.ui.screens.Splash.SplashScreen
 import java.time.Instant
 import com.ichin23.salbum.core.datastore.UserStateOuterClass.UserState
+import com.ichin23.salbum.ui.screens.FullSearch.FullSearchScreen
 import com.ichin23.salbum.ui.screens.Musics.MusicsScreen
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -77,10 +78,14 @@ fun MainScreen(rootNavController: NavHostController, authViewModel: AuthViewMode
                         { id ->
                             mainNavController.navigate(ScreenName.DETAIL_ALBUM + "/${id}")
                         },
+                        {mainNavController.navigate(ScreenName.FULL_SEARCH_SCREEN)}
                     )
                 }
+                composable(route = ScreenName.FULL_SEARCH_SCREEN) {
+                    FullSearchScreen({id -> mainNavController.navigate(ScreenName.DETAIL_ALBUM + "/${id}")})
+                }
                 composable(route = ScreenName.PROFILE_SCREEN) {
-                    ProfileScreen()
+                    ProfileScreen(navController = mainNavController)
                 }
 
                 navigation(route = ScreenName.ALBUM_FLOW, startDestination = ScreenName.DETAIL_ALBUM+ "/{albumId}") {
